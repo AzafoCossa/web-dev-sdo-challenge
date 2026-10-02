@@ -10,23 +10,8 @@ import keycloak from "keycloak-js";
 import App from './App.tsx'
 const env = import.meta.env;
 
-const kc = new keycloak({
-  url: env.VITE_KEYCLOAK_URL,
-  clientId: env.VITE_KEYCLOAK_CLIENT_ID,
-  realm: env.VITE_KEYCLOAK_REALM,
-});
-
-kc.init({
-  onLoad: "login-required",
-  checkLoginIframe: true,
-  pkceMethod: "S256",
-}).then((authenticated) => {
-  if (!authenticated) {
-    window.location.reload();
-  } else {
-    console.log("Authenticated!");
-  }
-});
+import App from "./App.tsx";
+import Navbar from "./components/Navbar.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,8 +20,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+async function enableMocking() {
+  if (env.VITE_APP_ENV !== "local") return;
+
+  const { worker } = await import("./mocks/browser");
+
+  return worker.start();
+}
+
+enableMocking().then(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <Navbar />
+      <RouterProvider router={router} />
+    </StrictMode>,
+  );
+});

@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import api from "./api";
+import type { RequestModel } from "./models/requestModel";
 
 type FormFields = {
   title: string;
@@ -9,16 +12,43 @@ type FormFields = {
   email: string;
 };
 
+interface RequestsPage {
+  items: RequestModel[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
 function App() {
+  const [requestsData, setRequestsData] = useState<RequestsPage | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    await new Promise((resolver) => setTimeout(resolver, 1000));
+    try {
+      const response = await api.post("/requests", data);
+      console.log("Response from POST /requests:", response.data);
+    } catch (error) {
+      console.error("Error saving request:", error);
+    }
   };
+
+  useEffect(() => {
+    api
+      .get<RequestsPage>("/requests")
+      .then((res) => setRequestsData(res.data))
+      .catch((err) => console.error("Error fetching requests:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p>Carregando...</p>;
 
   return (
     <>
@@ -128,11 +158,49 @@ function App() {
         </div>
 
         <div className="row">
-          <button type="submit" className="btn btn-lg btn-primary">
-            Salvar
+          <button
+            disabled={isSubmitting}
+            type="submit"
+            className="btn btn-lg btn-primary"
+          >
+            {isSubmitting ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </form>
+
+      <div className="my-3 p-3 bg-body rounded shadow-sm">
+        <h6 className="border-bottom pb-2 mb-0">Lista de requisicoes</h6>
+        <div className="div table-responsive">
+          <table className="table table-striped table-hover mt-4">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Titulo</th>
+                <th scope="col">Descricao</th>
+                <th scope="col">Nome do requerente</th>
+                <th scope="col">Email do requerente</th>
+                <th scope="col">Data da requisicao</th>
+                <th scope="col">Data da ultima atualizacao</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requestsData?.items.length === 0 && (
+                <p>Nenhuma requisição encontrada.</p>
+              )}
+              {requestsData?.items.map((data) => (
+                <tr key={data.id}>
+                  <th scope="row">{data.id}</th>
+                  <td>{data.title}</td>
+                  <td>{data.description}</td>
+                  <td>{data.requesterName}</td>
+                  <td>{data.requesterEmail}</td>
+                  <td>{data.createdAt}</td>
+                  <td>{data.updatedAt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
