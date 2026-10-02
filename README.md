@@ -11,13 +11,13 @@ Siga os passos abaixo para configurar o projeto e executar a aplicação localme
 Primeiro, faça o clone do repositório:
 
 ```bash
-git clone <https://github.com/AzafoCossa/web-dev-sdo-challenge>
+git clone https://github.com/AzafoCossa/web-dev-sdo-challenge
 ```
 
 Entre na pasta do projeto:
 
 ```bash
-cd <web-dev-sdo-challenge>
+cd web-dev-sdo-challenge
 ```
 
 ## 2. Instalar as dependências
