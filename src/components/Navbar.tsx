@@ -1,4 +1,5 @@
 import { Link, NavLink } from "react-router";
+import { keycloak } from "../keycloak";
 
 export default function Navbar() {
   return (
@@ -21,7 +22,7 @@ export default function Navbar() {
           <li className="nav-item">
             <button
               className="bg-danger text-white border-0 py-2 px-4 rounded"
-              onClick={() => kc.logout()}
+              onClick={() => keycloak.logout()}
             >
               Logout
             </button>
