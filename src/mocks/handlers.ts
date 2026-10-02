@@ -32,18 +32,23 @@ export const handlers = [
 
         const all = loadRequests();
 
+        const lastNumber = all.reduce((max, r) => {
+          const n = Number(r.id.replace("REQ-", ""));
+          return n > max ? n : max;
+        }, 999);
+
         const now = new Date().toLocaleString();
         const newRequest: RequestModel = {
-            id: 'REQ-1000',
-            requesterEmail: input.email,
-            requesterName: input.name,
-            description: input.description,
-            category: input.category,
-            priority: input.priority,
-            title: input.title,
-            createdAt: now,
-            updatedAt: now,
-        }
+          id: `REQ-${lastNumber + 1}`,
+          requesterEmail: input.email,
+          requesterName: input.name,
+          description: input.description,
+          category: input.category,
+          priority: input.priority,
+          title: input.title,
+          createdAt: now,
+          updatedAt: now,
+        };
 
         saveRequests([newRequest, ...all]);
 
