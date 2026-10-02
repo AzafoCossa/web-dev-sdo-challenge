@@ -1,6 +1,6 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import api from "../api"
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 type FormFields = {
   title: string;
@@ -12,7 +12,7 @@ type FormFields = {
 };
 
 export default function CreateRequest() {
-    
+  const navigate = useNavigate();
     const {
     register,
     handleSubmit,
@@ -23,7 +23,7 @@ export default function CreateRequest() {
     await new Promise((resolver) => setTimeout(resolver, 1000));
     try {
       const response = await api.post("/requests", data);
-      console.log("Response from POST /requests:", response.data);
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Error saving request:", error);
     }
