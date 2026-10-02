@@ -6,22 +6,22 @@ import { RouterProvider } from "react-router/dom";
 import "./sass/App.scss";
 import * as bootstrap from "bootstrap";
 
-import keycloak from "keycloak-js";
-import App from './App.tsx'
 const env = import.meta.env;
 
 import App from "./App.tsx";
-import Navbar from "./components/Navbar.tsx";
 import CreateRequest from "./pages/CreateRequest.tsx";
+import { RequestsListPage } from "./pages/RequestsListPage.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
     Component: App,
-  },
-  {
-    path: "/create-request",
-    Component: CreateRequest,
+    children: [
+      { path: "/", Component: RequestsListPage },
+      {
+        path: "/create-request",
+        Component: CreateRequest,
+      },
+    ],
   },
 ]);
 
@@ -36,7 +36,6 @@ async function enableMocking() {
 enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <Navbar />
       <RouterProvider router={router} />
     </StrictMode>,
   );
