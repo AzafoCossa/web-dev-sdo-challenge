@@ -12,11 +12,16 @@ const env = import.meta.env;
 
 import App from "./App.tsx";
 import Navbar from "./components/Navbar.tsx";
+import CreateRequest from "./pages/CreateRequest.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
+  },
+  {
+    path: "/create-request",
+    Component: CreateRequest,
   },
 ]);
 
