@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import type { RequestModel } from "../models/requestModel";
 import { Link, useNavigate } from "react-router";
+import Pagination from "../components/Pagination";
 
 interface RequestsPage {
   items: RequestModel[];
@@ -12,8 +13,10 @@ interface RequestsPage {
 }
 
 export function RequestsListPage() {
-      const [requestsData, setRequestsData] = useState<RequestsPage | null>(null);
-    const [loading, setLoading] = useState(true);
+  const [requestsData, setRequestsData] = useState<RequestsPage | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageData, setPageData] = useState<RequestsPage | null>(null);
+  const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -23,11 +26,14 @@ export function RequestsListPage() {
 
   useEffect(() => {
     api
-      .get<RequestsPage>("/requests")
-      .then((res) => setRequestsData(res.data))
+      .get<RequestsPage>("/requests", { params: { page, pageSize: 10 } })
+      .then((res) => {
+        setRequestsData(res.data);
+        setPageData(res.data);
+      })
       .catch((err) => console.error("Error fetching requests:", err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
 
   if (loading) return <p>Carregando...</p>;
     return (
@@ -70,6 +76,13 @@ export function RequestsListPage() {
               </tbody>
             </table>
           </div>
+          {pageData && (
+            <Pagination
+              page={pageData.page}
+              totalPages={pageData.totalPages}
+              onPageChange={setPage}
+            />
+          )}
         </div>
       </>
     );
