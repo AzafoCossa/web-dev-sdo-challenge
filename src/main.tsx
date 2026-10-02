@@ -11,6 +11,7 @@ const env = import.meta.env;
 import App from "./App.tsx";
 import CreateRequest from "./pages/CreateRequest.tsx";
 import { RequestsListPage } from "./pages/RequestsListPage.tsx";
+import { ViewRequestPage } from "./pages/ViewRequestPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/create-request",
         Component: CreateRequest,
+      },
+      {
+        path: "/view-request/:requestId",
+        Component: ViewRequestPage,
       },
     ],
   },
