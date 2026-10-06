@@ -6,10 +6,21 @@ const env = import.meta.env;
 const baseUrl = env.VITE_API_BASE_URL;
 
 export const handlers = [
-  http.get(`${baseUrl}/requests`, async () => {
+  http.get(`${baseUrl}/requests`, async ({ request }) => {
     await delay(1000);
 
-    const items = loadRequests();
+    const url = new URL(request.url);
+
+    const q = url.searchParams;
+    const search = q.get("search") ?? "";
+
+    const needle = search.trim().toLocaleLowerCase();
+    const items = loadRequests().filter((r) => {
+      return (
+        r.title.toLocaleLowerCase().includes(needle) ||
+        r.requesterName.toLocaleLowerCase().includes(needle)
+      );
+    });
 
     let page = 1;
     let pageSize = 10;
